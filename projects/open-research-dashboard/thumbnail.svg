@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 320" role="img" aria-labelledby="title desc">
+  <title id="title">Open research dashboard thumbnail</title>
+  <desc id="desc">A compact dashboard layout with charts and status rows.</desc>
+  <rect width="480" height="320" fill="#fbfbfb"/>
+  <rect x="48" y="42" width="384" height="236" rx="6" fill="#fff" stroke="#cfcfcf"/>
+  <rect x="76" y="76" width="112" height="72" rx="4" fill="#f4f4f4" stroke="#d8d8d8"/>
+  <rect x="212" y="76" width="192" height="72" rx="4" fill="#f4f4f4" stroke="#d8d8d8"/>
+  <rect x="76" y="174" width="328" height="16" rx="2" fill="#222"/>
+  <rect x="76" y="204" width="282" height="10" fill="#888"/>
+  <rect x="76" y="228" width="306" height="10" fill="#bdbdbd"/>
+  <path d="M96 128 120 106l20 16 24-30" fill="none" stroke="#333" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="236" y="101" width="34" height="28" fill="#cfcfcf"/>
+  <rect x="286" y="90" width="34" height="39" fill="#999"/>
+  <rect x="336" y="111" width="34" height="18" fill="#cfcfcf"/>
+</svg>

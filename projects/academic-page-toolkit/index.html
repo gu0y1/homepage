@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Academic Page Toolkit — Your Name</title>
+  <link rel="stylesheet" href="../../styles.css">
+</head>
+<body>
+<header id="site-header"></header>
+<main>
+  <div class="detail-header">
+    <div class="detail-meta">Active project · 2026</div>
+  </div>
+
+  <p>
+    A lightweight static-site content system for maintaining academic profile
+    pages with folder-based metadata and optional detail pages.
+  </p>
+
+  <h3>Highlights</h3>
+  <ul>
+    <li>Folder-based metadata for publications, research, projects, and teaching.</li>
+    <li>Optional detail pages for items that need a longer explanation.</li>
+    <li>Thumbnail support for visual project summaries.</li>
+  </ul>
+</main>
+<footer id="site-footer"></footer>
+<script src="../../common.js"></script>
+<script>
+  initLayout('../../', {
+    active: 'projects',
+    breadcrumb: {
+      sectionLabel: 'Projects',
+      sectionHref: 'projects/',
+      title: 'Academic Page Toolkit'
+    }
+  });
+</script>
+</body>
+</html>

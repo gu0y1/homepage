@@ -1,0 +1,34 @@
+[
+  {
+    "title": "Academic Page Toolkit",
+    "year": 2026,
+    "status": "Active",
+    "summary": "A lightweight static-site content system for academic profiles, publications, projects, and teaching pages.",
+    "tags": [
+      "static site",
+      "academic homepage"
+    ],
+    "links": {
+      "demo": "https://example.com/",
+      "code": "https://github.com/"
+    },
+    "folder": "academic-page-toolkit",
+    "thumbnail": "thumbnail.svg",
+    "has_page": true
+  },
+  {
+    "title": "Open Research Dashboard",
+    "year": 2025,
+    "summary": "A small dashboard prototype for tracking datasets, experiments, and paper artifacts across a research workflow.",
+    "thumbnail": "thumbnail.svg",
+    "tags": [
+      "dashboard",
+      "research tools"
+    ],
+    "links": {
+      "demo": "https://example.com/dashboard",
+      "code": "https://github.com/"
+    },
+    "folder": "open-research-dashboard"
+  }
+]

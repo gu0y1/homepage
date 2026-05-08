@@ -1,0 +1,11 @@
+{
+  "title": "Open Research Dashboard",
+  "year": 2025,
+  "summary": "A small dashboard prototype for tracking datasets, experiments, and paper artifacts across a research workflow.",
+  "thumbnail": "thumbnail.svg",
+  "tags": ["dashboard", "research tools"],
+  "links": {
+    "demo": "https://example.com/dashboard",
+    "code": "https://github.com/"
+  }
+}

@@ -1,0 +1,50 @@
+[
+  {
+    "title": "One paper accepted at ICML 2025",
+    "date": "2025-03-01",
+    "summary": "Our work on efficient gradient methods was accepted to ICML 2025.",
+    "links": {
+      "publication": "publications/example-paper-icml2025/"
+    },
+    "folder": "icml-2025-paper"
+  },
+  {
+    "title": "Started as Assistant Professor at [University]",
+    "date": "2025-01-01",
+    "summary": "I joined the Department of Computer Science at [University].",
+    "folder": "started-faculty-position"
+  },
+  {
+    "title": "Received the Best Paper Award at [Conference]",
+    "date": "2024-09-01",
+    "summary": "Our paper received the Best Paper Award at [Conference].",
+    "folder": "best-paper-award"
+  },
+  {
+    "title": "JMLR paper on Adam convergence published",
+    "date": "2024-06-01",
+    "summary": "Our theoretical analysis of Adam-type optimizers was published in JMLR.",
+    "links": {
+      "publication": "publications/example-paper-jmlr2024/"
+    },
+    "folder": "jmlr-paper"
+  },
+  {
+    "title": "Academic Page Toolkit project launched",
+    "date": "2024-04-01",
+    "summary": "A lightweight static-site toolkit for academic homepages is now available.",
+    "links": {
+      "project": "projects/academic-page-toolkit/"
+    },
+    "folder": "project-launch"
+  },
+  {
+    "title": "Teaching CS 101 in Spring 2025",
+    "date": "2024-03-01",
+    "summary": "Course materials and schedule are available on the teaching page.",
+    "links": {
+      "course": "teaching/cs101-spring2025/"
+    },
+    "folder": "teaching-announcement"
+  }
+]

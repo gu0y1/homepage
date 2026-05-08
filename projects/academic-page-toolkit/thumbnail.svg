@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 320" role="img" aria-labelledby="title desc">
+  <title id="title">Academic page toolkit thumbnail</title>
+  <desc id="desc">A minimal browser window with academic content blocks.</desc>
+  <rect width="480" height="320" fill="#f7f7f7"/>
+  <rect x="56" y="46" width="368" height="228" rx="6" fill="#fff" stroke="#cfcfcf"/>
+  <rect x="56" y="46" width="368" height="34" rx="6" fill="#222"/>
+  <circle cx="78" cy="63" r="5" fill="#d8d8d8"/>
+  <circle cx="96" cy="63" r="5" fill="#d8d8d8"/>
+  <circle cx="114" cy="63" r="5" fill="#d8d8d8"/>
+  <rect x="84" y="112" width="96" height="118" rx="3" fill="#e9e9e9" stroke="#cfcfcf"/>
+  <rect x="204" y="112" width="188" height="12" fill="#222"/>
+  <rect x="204" y="142" width="156" height="10" fill="#777"/>
+  <rect x="204" y="166" width="188" height="8" fill="#b8b8b8"/>
+  <rect x="204" y="186" width="170" height="8" fill="#b8b8b8"/>
+  <rect x="204" y="222" width="54" height="18" rx="2" fill="#f3f3f3" stroke="#cfcfcf"/>
+  <rect x="272" y="222" width="54" height="18" rx="2" fill="#f3f3f3" stroke="#cfcfcf"/>
+</svg>

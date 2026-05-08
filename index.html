@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Name — Academic Homepage</title>
+  <meta name="description" content="Academic homepage of Your Name, Department of Computer Science, University Name.">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"
+    onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+</head>
+<body>
+
+<header id="site-header"></header>
+
+<main>
+
+  <section id="about">
+    <h2>About</h2>
+    <div class="about-row">
+      <img class="about-photo" src="https://via.placeholder.com/280x350?text=Photo" alt="Photo of Your Name">
+      <div class="about-info">
+        <p class="name">Your Name (中文名)</p>
+        <p class="affiliation">
+          Assistant Professor<br>
+          Department of Computer Science<br>
+          University Name
+        </p>
+        <p>
+          I am an assistant professor at [University]. My research focuses on
+          [brief one-sentence description]. Before joining [University], I
+          received my Ph.D. from [University] in [Year], advised by
+          <a href="#">Prof. Advisor Name</a>.
+        </p>
+        <p>
+          <strong>Email:</strong> yourname [at] university.edu<br>
+          <a href="https://scholar.google.com/">Google Scholar</a> ·
+          <a href="https://github.com/">GitHub</a> ·
+          <a href="#">CV (PDF)</a>
+        </p>
+        <p class="more-link"><a href="about/">More about me →</a></p>
+      </div>
+    </div>
+  </section>
+
+  <section id="news">
+    <h2>News</h2>
+    <div id="news-list"></div>
+    <p class="view-all"><a href="news/">View all news →</a></p>
+  </section>
+
+  <section id="selected-publications">
+    <h2>Selected Publications</h2>
+    <div id="pub-list"></div>
+    <p class="view-all"><a href="publications/">View all publications →</a></p>
+  </section>
+
+  <section id="selected-projects">
+    <h2>Selected Projects</h2>
+    <div id="project-list"></div>
+    <p class="view-all"><a href="projects/">View all projects →</a></p>
+  </section>
+
+</main>
+
+<footer id="site-footer"></footer>
+
+<script src="common.js"></script>
+<script>
+  initLayout();
+  loadNews('news-list', {
+    jsonPath: 'news/items.json',
+    basePath: 'news/',
+    linkBase: '',
+    limit: 5
+  });
+  loadItems('pub-list', 'publications', {
+    jsonPath: 'publications/items.json',
+    basePath: 'publications/',
+    limit: 3
+  });
+  loadItems('project-list', 'projects', {
+    jsonPath: 'projects/items.json',
+    basePath: 'projects/',
+    limit: 3
+  });
+</script>
+</body>
+</html>
