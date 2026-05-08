@@ -1,0 +1,20 @@
+{
+  "title": "Picture2Pixel",
+  "date": "2024-12-06",
+  "year": 2024,
+  "status": "Open-source library",
+  "summary": "A Python library that converts images and GIFs into FPGA-displayable pixel art and Verilog-friendly OLED display logic.",
+  "tags": [
+    "Python",
+    "FPGA",
+    "Verilog",
+    "OLED",
+    "computer graphics"
+  ],
+  "links": {
+    "code": "https://github.com/gu0y1/picture2pixel/",
+    "pypi": "https://pypi.org/project/picture2pixel/",
+    "demo": "https://www.comp.nus.edu.sg/~guoyi/project/picture2pixel/",
+    "video": "https://www.comp.nus.edu.sg/~guoyi/project/picture2pixel/video/p2p_tutorial.mp4"
+  }
+}

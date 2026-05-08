@@ -7,5 +7,6 @@
   "links": {
     "demo": "https://example.com/",
     "code": "https://github.com/"
-  }
+  },
+  "hidden": true
 }

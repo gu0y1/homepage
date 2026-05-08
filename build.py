@@ -43,6 +43,9 @@ def build_section(section):
                 f'line {exc.lineno}, column {exc.colno}: {exc.msg}'
             ) from exc
 
+        if meta.get('hidden'):
+            continue
+
         meta['folder'] = entry.name
 
         # Auto-detect thumbnail

@@ -1,34 +1,25 @@
 [
   {
-    "title": "Academic Page Toolkit",
-    "year": 2026,
-    "status": "Active",
-    "summary": "A lightweight static-site content system for academic profiles, publications, projects, and teaching pages.",
+    "title": "Picture2Pixel",
+    "date": "2024-12-06",
+    "year": 2024,
+    "status": "Open-source library",
+    "summary": "A Python library that converts images and GIFs into FPGA-displayable pixel art and Verilog-friendly OLED display logic.",
     "tags": [
-      "static site",
-      "academic homepage"
+      "Python",
+      "FPGA",
+      "Verilog",
+      "OLED",
+      "computer graphics"
     ],
     "links": {
-      "demo": "https://example.com/",
-      "code": "https://github.com/"
+      "code": "https://github.com/gu0y1/picture2pixel/",
+      "pypi": "https://pypi.org/project/picture2pixel/",
+      "demo": "https://www.comp.nus.edu.sg/~guoyi/project/picture2pixel/",
+      "video": "https://www.comp.nus.edu.sg/~guoyi/project/picture2pixel/video/p2p_tutorial.mp4"
     },
-    "folder": "academic-page-toolkit",
-    "thumbnail": "thumbnail.svg",
+    "folder": "picture2pixel",
+    "thumbnail": "thumbnail.png",
     "has_page": true
-  },
-  {
-    "title": "Open Research Dashboard",
-    "year": 2025,
-    "summary": "A small dashboard prototype for tracking datasets, experiments, and paper artifacts across a research workflow.",
-    "thumbnail": "thumbnail.svg",
-    "tags": [
-      "dashboard",
-      "research tools"
-    ],
-    "links": {
-      "demo": "https://example.com/dashboard",
-      "code": "https://github.com/"
-    },
-    "folder": "open-research-dashboard"
   }
 ]

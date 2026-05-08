@@ -1,8 +1,0 @@
-{
-  "title": "JMLR paper on Adam convergence published",
-  "date": "2024-06-01",
-  "summary": "Our theoretical analysis of Adam-type optimizers was published in JMLR.",
-  "links": {
-    "publication": "publications/example-paper-jmlr2024/"
-  }
-}

@@ -3,9 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Your Name — Academic Homepage</title>
-  <meta name="description" content="Academic homepage of Your Name, Department of Computer Science, University Name.">
+  <title>Chen Guoyi — Academic Homepage</title>
+  <meta name="description" content="Academic homepage of Chen Guoyi, School of Computing, National University of Singapore.">
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"
@@ -18,29 +19,71 @@
 <main>
 
   <section id="about">
-    <h2>About</h2>
     <div class="about-row">
-      <img class="about-photo" src="https://via.placeholder.com/280x350?text=Photo" alt="Photo of Your Name">
+      <figure class="about-figure">
+        <img class="about-photo" src="assets/guoyi.png" alt="Photo of Chen Guoyi">
+        <figcaption>Guoyi is on the right.</figcaption>
+      </figure>
       <div class="about-info">
-        <p class="name">Your Name (中文名)</p>
+        <p class="name">Chen Guoyi 陈国毅</p>
         <p class="affiliation">
-          Assistant Professor<br>
-          Department of Computer Science<br>
-          University Name
+          Research Assistant<br>
+          School of Computing<br>
+          National University of Singapore
         </p>
-        <p>
-          I am an assistant professor at [University]. My research focuses on
-          [brief one-sentence description]. Before joining [University], I
-          received my Ph.D. from [University] in [Year], advised by
-          <a href="#">Prof. Advisor Name</a>.
-        </p>
-        <p>
-          <strong>Email:</strong> yourname [at] university.edu<br>
-          <a href="https://scholar.google.com/">Google Scholar</a> ·
-          <a href="https://github.com/">GitHub</a> ·
-          <a href="#">CV (PDF)</a>
-        </p>
-        <p class="more-link"><a href="about/">More about me →</a></p>
+        <p class="more-link"><a href="about/">Read more about me →</a></p>
+
+        <div class="profile-links" aria-label="Academic and professional profiles">
+          <a
+            href="https://scholar.google.com/citations?user=FMnS8mMAAAAJ"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Google Scholar"
+          >
+            <i class="fa-brands fa-google-scholar" aria-hidden="true"></i>
+            <span>Google Scholar</span>
+          </a>
+
+          <a
+            href="https://orcid.org/0009-0009-5776-5622"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="ORCID"
+          >
+            <i class="fa-brands fa-orcid" aria-hidden="true"></i>
+            <span>ORCID</span>
+          </a>
+
+          <a
+            href="https://github.com/gu0y1"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="GitHub"
+          >
+            <i class="fa-brands fa-github" aria-hidden="true"></i>
+            <span>GitHub</span>
+          </a>
+
+          <a
+            href="https://www.linkedin.com/in/chenguoyi/"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="LinkedIn"
+          >
+            <i class="fa-brands fa-linkedin" aria-hidden="true"></i>
+            <span>LinkedIn</span>
+          </a>
+
+          <a
+            href="https://drive.google.com/file/d/1OEI-ij3U9DURymXr-Ms5DFBtbUxSEEqd/view?usp=sharing"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="CV"
+          >
+            <i class="fa-solid fa-file-lines" aria-hidden="true"></i>
+            <span>CV</span>
+          </a>
+        </div>
       </div>
     </div>
   </section>
@@ -48,13 +91,13 @@
   <section id="news">
     <h2>News</h2>
     <div id="news-list"></div>
-    <p class="view-all"><a href="news/">View all news →</a></p>
+    <p class="view-all"><a href="news/">View all news &rarr;</a></p>
   </section>
 
   <section id="selected-publications">
     <h2>Selected Publications</h2>
     <div id="pub-list"></div>
-    <p class="view-all"><a href="publications/">View all publications →</a></p>
+    <p class="view-all"><a href="publications/">View all publications &rarr;</a></p>
   </section>
 
   <section id="selected-projects">
@@ -74,12 +117,14 @@
     jsonPath: 'news/items.json',
     basePath: 'news/',
     linkBase: '',
-    limit: 5
+    limit: 5,
+    emptyMessage: 'News will be added here.'
   });
   loadItems('pub-list', 'publications', {
     jsonPath: 'publications/items.json',
     basePath: 'publications/',
-    limit: 3
+    limit: 3,
+    emptyMessage: 'Publications will be added here.'
   });
   loadItems('project-list', 'projects', {
     jsonPath: 'projects/items.json',

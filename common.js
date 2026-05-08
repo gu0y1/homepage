@@ -7,7 +7,7 @@
  * ============================================================
  */
 var SITE = {
-  name: 'Your Name',
+  name: 'Chen Guoyi',
   nav: [
     { key: 'research',     label: 'Research',     href: 'research/' },
     { key: 'publications', label: 'Publications', href: 'publications/' },
@@ -15,7 +15,7 @@ var SITE = {
     { key: 'teaching',     label: 'Teaching',     href: 'teaching/' },
     { key: 'contact',      label: 'Contact',      href: 'contact/' }
   ],
-  footer: '&copy; 2025 Your Name. Last updated: March 2025.'
+  footer: '&copy; 2026 Chen Guoyi. Last updated: May 2026.'
 };
 
 /**
@@ -40,16 +40,17 @@ function initLayout(base, opts) {
     }).join('');
     header.innerHTML =
       '<div class="container">' +
-        '<h1><a href="' + base + '">' + SITE.name + '</a></h1>' +
+        renderTerminalLogo(base, opts.logoSection || detectTerminalSection(activeKey)) +
         '<nav>' + navHtml + '</nav>' +
       '</div>';
+    initTerminalLogo(header.querySelector('[data-terminal-logo]'));
   }
 
   renderBreadcrumb(base, opts.breadcrumb);
 
   var footer = document.getElementById('site-footer');
   if (footer) {
-    footer.innerHTML = SITE.footer;
+    footer.innerHTML = '<div class="container">' + SITE.footer + '</div>';
   }
 }
 
@@ -62,6 +63,7 @@ function initLayout(base, opts) {
  * @param {string} opts.basePath - prefix for item folder paths (default: '')
  * @param {string} opts.linkBase - prefix for relative links in metadata (default: '')
  * @param {number} opts.limit   - max items to show, 0 = all (default: 0)
+ * @param {string} opts.emptyMessage - placeholder shown when the list is empty
  */
 async function loadItems(containerId, section, opts) {
   var o = opts || {};
@@ -79,7 +81,8 @@ async function loadItems(containerId, section, opts) {
     var items = await res.json();
 
     if (items.length === 0) {
-      container.innerHTML = '<p class="empty-note">No items yet.</p>';
+      container.innerHTML =
+        '<p class="empty-note">' + escapeHtml(o.emptyMessage || 'No items yet.') + '</p>';
       return;
     }
 
@@ -115,7 +118,8 @@ async function loadNews(containerId, opts) {
     var items = await res.json();
 
     if (items.length === 0) {
-      container.innerHTML = '<p class="empty-note">No news yet.</p>';
+      container.innerHTML =
+        '<p class="empty-note">' + escapeHtml(o.emptyMessage || 'No news yet.') + '</p>';
       return;
     }
 
@@ -350,15 +354,167 @@ function detectActiveSection() {
   return '';
 }
 
+function detectTerminalSection(activeKey) {
+  if (activeKey) return normalizeTerminalSection(activeKey);
+
+  var parts = window.location.pathname
+    .replace(/\/index\.html$/, '/')
+    .split('/')
+    .filter(Boolean);
+
+  if (parts[0] === 'homepage') parts.shift();
+  return normalizeTerminalSection(parts[0] || '');
+}
+
+function normalizeTerminalSection(section) {
+  return String(section || '')
+    .toLowerCase()
+    .split('/')[0]
+    .replace(/[^a-z0-9-]/g, '');
+}
+
+function renderTerminalLogo(base, section) {
+  section = normalizeTerminalSection(section);
+  var label = section ?
+    'Terminal logo, current directory ' + section :
+    'Terminal logo, home directory';
+
+  return '<h1 class="site-logo">' +
+    '<a class="terminal-logo" href="' + base + '" aria-label="' + escapeHtml(label) + '"' +
+      ' data-terminal-logo data-terminal-section="' + escapeHtml(section) + '">' +
+      '<span class="terminal-text">guoyi@nus:~$ </span>' +
+      '<span class="terminal-cursor" aria-hidden="true">_</span>' +
+    '</a>' +
+  '</h1>';
+}
+
+function initTerminalLogo(logo) {
+  if (!logo) return;
+
+  var text = logo.querySelector('.terminal-text');
+  if (!text) return;
+
+  var timers = [];
+  var section = normalizeTerminalSection(logo.getAttribute('data-terminal-section'));
+  var homePrompt = 'guoyi@nus:~$ ';
+  var finalPrompt = section ? 'guoyi@nus:~/' + section + '$ ' : homePrompt;
+  var command = section ? homePrompt + 'cd ' + section + '/' : homePrompt;
+  var reduceMotion = window.matchMedia &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var isReturningHome = false;
+
+  function queue(callback, delay) {
+    var id = window.setTimeout(callback, delay);
+    timers.push(id);
+    return id;
+  }
+
+  function clearTimers() {
+    timers.forEach(function (id) {
+      window.clearTimeout(id);
+    });
+    timers = [];
+  }
+
+  function typeText(start, full, delay, done) {
+    var index = start.length;
+    text.textContent = start;
+
+    queue(function typeNext() {
+      index += 1;
+      renderTerminalText(text, full.slice(0, index), start.length);
+
+      if (index < full.length) {
+        queue(typeNext, delay);
+        return;
+      }
+
+      if (done) done();
+    }, delay);
+  }
+
+  logo.addEventListener('click', function (event) {
+    if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+      return;
+    }
+
+    if (reduceMotion) return;
+
+    event.preventDefault();
+    if (isReturningHome) return;
+    isReturningHome = true;
+
+    clearTimers();
+    typeText(finalPrompt, finalPrompt + 'cd ~', 38, function () {
+      queue(function () {
+        if (section) {
+          window.location.href = logo.href;
+        } else {
+          text.textContent = finalPrompt;
+          isReturningHome = false;
+        }
+      }, 220);
+    });
+  });
+
+  if (!section || reduceMotion) {
+    text.textContent = finalPrompt;
+    return;
+  }
+
+  queue(function () {
+    typeText(homePrompt, command, 38, function () {
+      queue(function () {
+        text.textContent = finalPrompt;
+      }, 260);
+    });
+  }, 160);
+}
+
+function renderTerminalText(target, value, commandStart) {
+  var prompt = value.slice(0, commandStart);
+  var command = value.slice(commandStart);
+
+  target.textContent = '';
+  target.appendChild(document.createTextNode(prompt));
+
+  if (!command) return;
+
+  if (command.indexOf('cd') === 0) {
+    var keyword = document.createElement('span');
+    keyword.className = 'terminal-command';
+    keyword.textContent = command.slice(0, Math.min(2, command.length));
+    target.appendChild(keyword);
+    target.appendChild(document.createTextNode(command.slice(2)));
+    return;
+  }
+
+  target.appendChild(document.createTextNode(command));
+}
+
 function renderBreadcrumb(base, breadcrumb) {
   if (!breadcrumb) return;
 
   var header = document.getElementById('site-header');
   if (!header) return;
 
-  var sectionLabel = breadcrumb.sectionLabel || '';
-  var sectionHref = breadcrumb.sectionHref || '';
   var title = breadcrumb.title || '';
+  var items = breadcrumb.items || [];
+
+  if (!items.length && breadcrumb.sectionLabel) {
+    items.push({
+      label: breadcrumb.sectionLabel,
+      href: breadcrumb.sectionHref || ''
+    });
+  }
+
+  var itemHtml = items.map(function (item) {
+    var href = item.href || '';
+    return '<span aria-hidden="true">&gt;</span>' +
+      (href ?
+        '<a href="' + base + href + '">' + escapeHtml(item.label || '') + '</a>' :
+        '<span>' + escapeHtml(item.label || '') + '</span>');
+  }).join('');
 
   var wrap = document.createElement('div');
   wrap.className = 'breadcrumb-wrap';
@@ -366,7 +522,7 @@ function renderBreadcrumb(base, breadcrumb) {
     '<div class="breadcrumb container">' +
       '<nav class="breadcrumb-path" aria-label="Breadcrumb">' +
         '<a href="' + base + '">Home</a>' +
-        (sectionLabel ? '<span aria-hidden="true">&gt;</span><a href="' + base + sectionHref + '">' + escapeHtml(sectionLabel) + '</a>' : '') +
+        itemHtml +
       '</nav>' +
       (title ? '<h2>' + escapeHtml(title) + '</h2>' : '') +
     '</div>';
