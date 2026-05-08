@@ -1,0 +1,9 @@
+{
+  "title": "CG2271 Real-Time Operating Systems",
+  "semester": "2025/26 Semester 1",
+  "role": "Teaching Assistant",
+  "year": 2025,
+  "date": "2025-08-01",
+  "summary": "An RTOS course covering tasks, scheduling algorithms, RTOS customisation, and concurrent real-time programming.",
+  "tags": ["RTOS", "systems", "embedded"]
+}

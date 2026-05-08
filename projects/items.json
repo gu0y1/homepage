@@ -14,9 +14,7 @@
     ],
     "links": {
       "code": "https://github.com/gu0y1/picture2pixel/",
-      "pypi": "https://pypi.org/project/picture2pixel/",
-      "demo": "https://www.comp.nus.edu.sg/~guoyi/project/picture2pixel/",
-      "video": "https://www.comp.nus.edu.sg/~guoyi/project/picture2pixel/video/p2p_tutorial.mp4"
+      "pypi": "https://pypi.org/project/picture2pixel/"
     },
     "folder": "picture2pixel",
     "thumbnail": "thumbnail.png",

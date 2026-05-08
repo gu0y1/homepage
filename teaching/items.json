@@ -1,11 +1,99 @@
 [
   {
-    "title": "CS 101 — Introduction to Computer Science",
-    "semester": "Spring 2025",
-    "role": "Instructor",
+    "title": "SWS3022 AI/ML for Financial Services",
+    "semester": "2026 Summer",
+    "role": "Tutor",
+    "year": 2026,
+    "date": "2026-05-01",
+    "summary": "A financial services workshop introducing AI/ML methods, financial data, fintech dashboards, web applications, and future financial systems such as Finternet.",
+    "tags": [
+      "AI/ML",
+      "finance",
+      "fintech"
+    ],
+    "links": {
+      "materials": "https://sws3022.github.io/",
+      "schedule": "https://sws3022.github.io/about/class-schedule/"
+    },
+    "folder": "sws3022-ai-ml-financial-services",
+    "has_page": true
+  },
+  {
+    "title": "CG2111A Engineering Principles and Practice II",
+    "semester": "2025/26 Semester 2",
+    "role": "Teaching Assistant",
+    "year": 2026,
+    "date": "2026-01-01",
+    "summary": "A computer engineering design course where students build real-world systems involving information processing, interfacing, scaling, safety, security, sustainability, and fault-tolerant design.",
+    "tags": [
+      "computer engineering",
+      "systems",
+      "design"
+    ],
+    "folder": "cg2111a-2025-26-semester-2",
+    "has_page": true
+  },
+  {
+    "title": "CG2271 Real-Time Operating Systems",
+    "semester": "2025/26 Semester 1",
+    "role": "Teaching Assistant",
     "year": 2025,
-    "summary": "An introductory course covering fundamental concepts in computer science including algorithms, data structures, and programming.",
-    "folder": "cs101-spring2025",
+    "date": "2025-08-01",
+    "summary": "An RTOS course covering tasks, scheduling algorithms, RTOS customisation, and concurrent real-time programming.",
+    "tags": [
+      "RTOS",
+      "systems",
+      "embedded"
+    ],
+    "folder": "cg2271-2025-26-semester-1",
+    "has_page": true
+  },
+  {
+    "title": "CG2111A Engineering Principles and Practice II",
+    "semester": "2024/25 Semester 2",
+    "role": "Lab Tutor",
+    "year": 2025,
+    "date": "2025-01-01",
+    "summary": "A computer engineering design course where students build real-world systems involving information processing, interfacing, scaling, safety, security, sustainability, and fault-tolerant design.",
+    "tags": [
+      "computer engineering",
+      "systems",
+      "design"
+    ],
+    "folder": "cg2111a-2024-25-semester-2",
+    "has_page": true
+  },
+  {
+    "title": "SWS3009 Robotics and Machine Learning",
+    "semester": "2024 Summer",
+    "role": "Tutor",
+    "year": 2024,
+    "date": "2024-05-01",
+    "summary": "A summer workshop with concurrent robotics and deep learning tracks, covering microcontroller interfacing, sensing, actuation, decision-making, and Python/C programming foundations.",
+    "tags": [
+      "robotics",
+      "machine learning",
+      "workshop"
+    ],
+    "links": {
+      "schedule": "https://sws.comp.nus.edu.sg/2024/Home.html"
+    },
+    "folder": "sws3009-robotics-machine-learning",
+    "has_page": true
+  },
+  {
+    "title": "CG2111A Engineering Principles and Practice II",
+    "semester": "2023/24 Semester 2",
+    "role": "Teaching Assistant",
+    "year": 2024,
+    "date": "2024-01-01",
+    "summary": "A computer engineering design course where students build real-world systems involving information processing, interfacing, scaling, safety, security, sustainability, and fault-tolerant design.",
+    "tags": [
+      "computer engineering",
+      "systems",
+      "design"
+    ],
+    "folder": "cg2111a-2023-24-semester-2",
     "has_page": true
   }
 ]

@@ -1,0 +1,13 @@
+{
+  "title": "SWS3022 AI/ML for Financial Services",
+  "semester": "2026 Summer",
+  "role": "Tutor",
+  "year": 2026,
+  "date": "2026-05-01",
+  "summary": "A financial services workshop introducing AI/ML methods, financial data, fintech dashboards, web applications, and future financial systems such as Finternet.",
+  "tags": ["AI/ML", "finance", "fintech"],
+  "links": {
+    "materials": "https://sws3022.github.io/",
+    "schedule": "https://sws3022.github.io/about/class-schedule/"
+  }
+}

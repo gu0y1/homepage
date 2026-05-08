@@ -1,0 +1,12 @@
+{
+  "title": "SWS3009 Robotics and Machine Learning",
+  "semester": "2024 Summer",
+  "role": "Tutor",
+  "year": 2024,
+  "date": "2024-05-01",
+  "summary": "A summer workshop with concurrent robotics and deep learning tracks, covering microcontroller interfacing, sensing, actuation, decision-making, and Python/C programming foundations.",
+  "tags": ["robotics", "machine learning", "workshop"],
+  "links": {
+    "schedule": "https://sws.comp.nus.edu.sg/2024/Home.html"
+  }
+}
