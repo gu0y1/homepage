@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Q&amp;A Forum - CG2111A - Chen Guoyi</title>
+  <meta name="description" content="Question submission guidance and archived solved questions.">
+  <link rel="stylesheet" href="../../../styles.css">
+  <link rel="stylesheet" href="../cg2111a.css">
+</head>
+<body>
+<header id="site-header"></header>
+<main class="project-page cg2111a-page">
+  <section class="cg-course-panel" id="cg-course-panel"></section>
+  <article class="cg-tutorial-content">
+    <h2 class="cg-centered-heading">ROS Q & A Forum</h2>
+			   
+    			   <p>Welcome to our Question Submission Platform!</p>
+
+    <p>This platform is designed for you to submit any questions you encounter that you cannot resolve on your own or with the help of the Internet. Before submitting your question, please ensure you have thoroughly reviewed the tutorial materials and our previous Q&A:</p>
+
+    <blockquote>
+      &gt; Tutorial: <a href="../">https://www.comp.nus.edu.sg/~guoyi/tutorial/cg2111a/ros/</a><br>
+      &gt; Previous Q&A: <a href="./">CG2111A Q&A Forum</a>
+    </blockquote>
+
+    <p>If, after careful review, you still find yourself facing challenges, kindly detail your question or issue clearly in this <a href="https://forms.office.com/Pages/ResponsePage.aspx?id=Xu-lWwkxd06Fvc_rDTR-gghhb2vyGe9ItTkTPF_i9ZBUQktFQlBIUzVaQzQwNUdXNzFOUjRJMjFWMS4u">form</a>.</p>
+
+    <p>Thank you for reaching out for support!</p>
+
+    <br>
+
+    <hr>
+
+    <h2 class="cg-centered-heading">Previous Solved Questions</h2>
+    <ul>
+    	<li>Please use <code class="language-sh">Ctrl + F</code> to search keywords.</li>
+    	<li>Click <code class="language-sh">Q&A ID</code> to read detailed answers.</li>
+    </ul>
+    <br>
+
+    <table class="solved-questions">
+        <tr>
+            <th>Q&A ID</th>
+            <th>Category</th>
+            <th>Question</th>
+            <th>Solution</th>
+	
+    	</tr>
+    	    <tr>
+            <td><a href="issue/24-03-29_01.pdf">2024-03-29/01</a></td>
+            <td><a href="../ros-topics/">Tutorial 2</a></td>
+            <td>No such file or directory: gnome-terminal.</td>
+            <td>Should install gnome terminal using: sudo apt-get install gnome-terminal.
+    </td>
+        </tr>
+        </tr>
+    	    <tr>
+            <td><a href="issue/24-03-26_02.pdf">2024-03-26/02</a></td>
+            <td><a href="../ros-network/">Tutorial 4</a></td>
+            <td>Unable to receive <code class="language-sh">/scan</code> and LiDAR data on WSL</td>
+            <td>The TA has verified the topics can be received on WSL successfully. We suggest the student take more steps to verify the LiDAR and ROS status.</td>
+        </tr>
+        <tr>
+            <td><a href="issue/24-03-26_01.pdf">2024-03-26/01</a></td>
+            <td><a href="../ros-network/">Tutorial 4</a></td>
+            <td>How to set up ROS Noetic on Ubuntu 22.04?</td>
+            <td>Install ROS Noetic on Ubuntu 20.04 LTS following the <a href="../ros-network/">Tutorial 4</a>. Consider using a VM if you're on a newer Ubuntu version.</td>
+        </tr>
+        <!-- Repeat <tr>...</tr> block for each question -->
+    </table>
+  </article>
+  <nav class="cg-page-pager" id="cg-page-pager" aria-label="Tutorial page navigation"></nav>
+</main>
+<footer id="site-footer"></footer>
+<script src="../../../common.js"></script>
+<script src="../tutorial.js"></script>
+<script>
+  initCg2111aPage({
+    base: '../../../',
+    root: '../',
+    page: 'forum'
+  });
+</script>
+</body>
+</html>

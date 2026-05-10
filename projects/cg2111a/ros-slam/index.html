@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Raspberry Pi LiDAR &amp; SLAM - CG2111A - Chen Guoyi</title>
+  <meta name="description" content="Set up RPLidar and Hector SLAM under ROS on Raspberry Pi.">
+  <link rel="stylesheet" href="../../../styles.css">
+  <link rel="stylesheet" href="../cg2111a.css">
+</head>
+<body>
+<header id="site-header"></header>
+<main class="project-page cg2111a-page">
+  <section class="cg-course-panel" id="cg-course-panel"></section>
+  <article class="cg-tutorial-content">
+    <h2 class="cg-centered-heading">Raspberry Pi LiDAR & SLAM</h2>
+    			   <p>This tutorial is designed to introduce you to the fundamental concepts of <strong>S</strong>imultaneous <strong>L</strong>ocalization <strong>A</strong>nd <strong>M</strong>apping (SLAM) - a pivotal technology for mobile robotics that addresses the dual challenges of mapping an environment and pinpointing a robot's location within it. Through hands-on exercises, you'll learn how to set up your Raspberry Pi to implement the Hector SLAM algorithm, a variant that doesn't rely on odometry data, making it ideal for a range of applications. From compiling and running essential ROS nodes to visualizing environment maps with rviz, this tutorial will equip you with the knowledge and skills to explore the dynamic field of robotics SLAM. Get ready to embark on a journey that blends theory with practical application, paving the way for advanced robotics projects and research.</p>
+
+                   <h2><strong>0. Introduction to SLAM</strong></h2>
+                   <p>For a mobile robot platform, two of the main tasks associated with navigation are <strong>mapping</strong> and <strong>localization</strong>. Mapping involves constructing the floor plan of the robot's immediate surroundings, while localization refers to identifying the robot's location on that map. Though each can be solved individually with a number of solutions, solving both simultaneously presents a unique challenge and an engaging one at that.</p>
+                   <p>Consider our ALEX being used for the first time in an unexplored environment. Without a pre-existing map, the ALEX must navigate to create one. This presents a "chicken and egg" problem: navigation requires a map, but to create a map, the robot must navigate. Enter SLAM, a set of algorithms designed to tackle both challenges concurrently. SLAM remains a vibrant area of research, constantly evolving with new optimizations and methodologies.</p>
+                   <p>While implementing a SLAM algorithm might be complex at this stage, understanding its core principles is intuitive. Below, we provide a high-level overview of SLAM's main steps, accompanied by a brief glossary of common terms:</p>
+                   <h3>0.1 Common SLAM Terms</h3>
+                   <ul>
+                      <li><strong>Odometry/Telemetry:</strong> Information about the robot's position, typically derived from motor controls.</li>
+                      <li><strong>Landmark:</strong> Stable, re-observable environmental features that are distinguishable. Examples include walls and large furniture.</li>
+                   </ul>
+                   <h3>0.2 Main Steps of a Typical SLAM Algorithm</h3>
+                   <div class="cg-center"><img src="../ros-slam/img/SLAM_intro.jpg" width=40%></div>
+                   <ul>
+                      <li><strong>A1 Extract Landmarks:</strong> Analyze data from sensors (like LiDAR) to identify potential landmarks. Techniques vary, such as grouping close data points or detecting abrupt changes that signify an edge.</li>
+                      <li><strong>A2 Data Association:</strong> Match observed data points to known landmarks, accounting for variations in sensor readings across different scans.</li>
+                      <li><strong>B1 Estimate Location:</strong> Use movement data (e.g., from motor controls) to estimate the robot's current location. Given the potential inaccuracies in control data, these estimates are not always reliable.</li>
+                      <li><strong>B2 Re-observe Landmarks:</strong> Compare the estimated location with new observation data to refine the robot's perceived position.</li>
+                      <li><strong>B3 Update Map:</strong> Expand the map with new observations, enhancing it for future navigation cycles.</li>
+                   </ul>
+                   <p>Among the SLAM variants, <strong>GMapping</strong> and <strong>Hector SLAM</strong> are particularly notable. Hector SLAM, interestingly, does not rely on odometry data for localization. Instead, it matches new observations with the existing map to deduce the robot's movement. This approach facilitates unique applications, such as handheld or drone mapping devices, though it requires careful pacing to accommodate Hector SLAM's processing capabilities.</p>
+                   <p>In CG2111A, we will implement the <strong>Hector SLAM</strong>.
+                      <br><br>
+                   <h2><strong>1. Setup SLAM Environment on your Raspberry Pi</strong></h2>
+                   <div class="warning">
+                      <strong class="callout-label">Warning!&nbsp;</strong>
+                      <p>If you're utilizing the OS image prepared by Prof. Boyd, you can bypass Section 1 entirely, as the SLAM libraries have already been pre-installed on your Raspberry Pi.</p>
+                      <p>However, if you've set up your ROS from scratch following <a href="../ros-setup/">Tutorial 1: Setup ROS on RPi 4</a>, you'll find the information in this section essential.</p>
+                   </div>
+                   <br>
+                   <h3>1.1 Adding Required Packages and Building Again</h3>
+                   <p>First, you need to initialize the ROS environment variables. Open a terminal and execute the following command:</p>
+                   <pre><code class="language-sh">source /opt/ros/noetic/setup.bash
+    sudo pip3 install -U rosinstall rosinstall_generator wstool rospkg</code></pre>
+                   <p>Next, use the <code class="language-sh">rosinstall_generator</code> tool to fetch the installation information for the <code class="language-sh">rplidar_ros</code>, <code class="language-sh">hector_slam</code>, and <code class="language-sh">rqt_graph</code> packages, and merge them into the <code class="language-sh">src</code> directory of your workspace. Execute the following command:</p>
+                   <pre><code class="language-sh">rosinstall_generator rplidar_ros hector_slam rqt_graph --rosdistro noetic --deps --wet-only --tar | wstool merge -t src -
+    wstool update -t src -j8</code></pre>
+                   <p>Then, install <code class="language-sh">OpenCV</code> Python Libraries, because we need its sub-library <code class="language-sh">cv_bridge</code> to build our workspace:</p>
+                   <pre><code class="language-sh">sudo apt-get install libopencv-dev python3-opencv</code></pre>
+                   <p>Then, build your workspace using the <code class="language-sh">catkin_make_isolated</code> command to ensure Python 3 is used. Execute the following command:</p>
+                   <pre><code class="language-sh">sudo src/catkin/bin/catkin_make_isolated --install -DCMAKE_BUILD_TYPE=Release --install-space /opt/ros/noetic -j1 -DPYTHON_EXECUTABLE=/usr/bin/python3</code></pre>
+                   <br>
+                   <h3>
+                   1.2 Creating a New Workspace and Building</h2>
+                   <p>To start working with the new workspace, you first need to initialize its environment variables. Execute the following command:</p>
+                   <pre><code class="language-sh">source /opt/ros/noetic/setup.bash</code></pre>
+                   <p>Then, create a new workspace and its <code class="language-sh">src</code> directory. Execute the following commands:</p>
+                   <pre><code class="language-sh">mkdir -p ~/cg2111a/src
+    cd ~/cg2111a
+    catkin_init_workspace src</code></pre>
+                   <p>Afterwards, enter the <code class="language-sh">src</code> directory, clone the <code class="language-sh">rplidar_ros</code> package, and switch to the <code class="language-sh">slam</code> branch. Execute the following commands:</p>
+                   <pre><code class="language-sh">cd src
+    git clone https://github.com/robopeak/rplidar_ros.git
+    cd rplidar_ros
+    git checkout slam
+    cd ../..</code></pre>
+                   <p>Finally, build the entire workspace using the <code class="language-sh">catkin_make</code> command. Execute the following command:</p>
+                   <pre><code class="language-sh">catkin_make</code></pre>
+                   <p>Following these steps, you should have successfully set up the ROS environment, including the required <code class="language-sh">rplidar_ros</code>, <code class="language-sh">hector_slam</code>, and <code class="language-sh">rqt_graph</code> packages, as well as a new workspace. If you encounter any issues during any of the steps, make sure to check the commands for accuracy and that all dependencies are installed.</p>
+                   <div class="check">
+                      <strong class="callout-label">Check Your Work Now&nbsp;</strong>
+                      <p>Please check by running the codes in this section; you received no warnings or errors. </p>
+                      <p>Have you done all the tasks correctly above?<input type="checkbox" class="task-checkbox" id="task1"><label for="task1" class="status waiting">Waiting Complete</label></p>
+                   </div>
+                   <br><br>
+                   <h2><strong>2. Running Hector SLAM under ROS</strong></h2>
+                   <p><strong>Key idea:</strong> We are going to compile and run multiple ROS nodes in this section. Essentially, we need:</p>
+                   <ul>
+                      <li>a. A RPLidar node to broadcast the LiDAR readings.</li>
+                      <li>b. A SLAM node to use LiDAR readings for environment mapping.</li>
+                      <li>c. A Visualization node to render the environment map.</li>
+                   </ul>
+                   <p>Other than (c), where we will be using a standard ROS visualization node, known as rviz, we will have to compile and run (a) and (b) on our own.</p>
+                   <h3>2.1 Compiling RPLidar ROS node</h3>
+                   <br>
+                   Open a terminal and write:
+                   <pre><code class="language-sh">source /opt/ros/noetic/setup.bash
+    cd ~/cg2111a</code></pre>
+                   You can browse around to see the structure of the folder: <code class="language-sh">cg2111a/src/rplidar_ros/</code>. If you would like to know more about ROS file directories, please view the <a href="../ros-topics/">Tutorial 2: Talker & Listener</a>.<br><br>
+                   <details>
+                      <summary>Click here to expand the whole file tree.</summary>
+                      <pre><code class="language-markup">~/cg2111a $ tree
+    .
+    |-- build
+    |  |-- atomic_configure
+    |  |  |-- env.sh
+    |  |  |-- local_setup.bash
+    |  |  |-- local_setup.sh
+    |  |  |-- local_setup.zsh
+    |  |  |-- setup.bash
+    |  |  |-- setup.sh
+    |  |  |-- _setup_util.py
+    |  |  `-- setup.zsh
+    |  |-- catkin
+    |  |  `-- catkin_generated
+    |  |      `-- version
+    |  |          `-- package.cmake
+    |  |-- catkin_generated
+    |  |  |-- env_cached.sh
+    |  |  |-- generate_cached_setup.py
+    |  |  |-- installspace
+    |  |  |  |-- env.sh
+    |  |  |  |-- local_setup.bash
+    |  |  |  |-- local_setup.sh
+    |  |  |  |-- local_setup.zsh
+    |  |  |  |-- setup.bash
+    |  |  |  |-- setup.sh
+    |  |  |  |-- _setup_util.py
+    |  |  |  `-- setup.zsh
+    |  |  |-- order_packages.cmake
+    |  |  |-- order_packages.py
+    |  |  |-- setup_cached.sh
+    |  |  `-- stamps
+    |  |      `-- Project
+    |  |          |-- interrogate_setup_dot_py.py.stamp
+    |  |          |-- order_packages.cmake.em.stamp
+    |  |          |-- package.xml.stamp
+    |  |          `-- _setup_util.py.stamp
+    |  |-- CATKIN_IGNORE
+    |  |-- catkin_make.cache
+    |  |-- CMakeCache.txt
+    |  |-- CMakeFiles
+    |  |  |-- 3.16.3
+    |  |  |  |-- CMakeCCompiler.cmake
+    |  |  |  |-- CMakeCXXCompiler.cmake
+    |  |  |  |-- CMakeDetermineCompilerABI_C.bin
+    |  |  |  |-- CMakeDetermineCompilerABI_CXX.bin
+    |  |  |  |-- CMakeSystem.cmake
+    |  |  |  |-- CompilerIdC
+    |  |  |  |  |-- a.out
+    |  |  |  |  |-- CMakeCCompilerId.c
+    |  |  |  |  `-- tmp
+    |  |  |  `-- CompilerIdCXX
+    |  |  |      |-- a.out
+    |  |  |      |-- CMakeCXXCompilerId.cpp
+    |  |  |      `-- tmp
+    |  |  |-- clean_test_results.dir
+    |  |  |  |-- build.make
+    |  |  |  |-- cmake_clean.cmake
+    |  |  |  |-- DependInfo.cmake
+    |  |  |  `-- progress.make
+    |  |  |-- cmake.check_cache
+    |  |  |-- CMakeDirectoryInformation.cmake
+    |  |  |-- CMakeError.log
+    |  |  |-- CMakeOutput.log
+    |  |  |-- CMakeRuleHashes.txt
+    |  |  |-- CMakeTmp
+    |  |  |-- download_extra_data.dir
+    |  |  |  |-- build.make
+    |  |  |  |-- cmake_clean.cmake
+    |  |  |  |-- DependInfo.cmake
+    |  |  |  `-- progress.make
+    |  |  |-- doxygen.dir
+    |  |  |  |-- build.make
+    |  |  |  |-- cmake_clean.cmake
+    |  |  |  |-- DependInfo.cmake
+    |  |  |  `-- progress.make
+    |  |  |-- Makefile2
+    |  |  |-- Makefile.cmake
+    |  |  |-- progress.marks
+    |  |  |-- run_tests.dir
+    |  |  |  |-- build.make
+    |  |  |  |-- cmake_clean.cmake
+    |  |  |  |-- DependInfo.cmake
+    |  |  |  `-- progress.make
+    |  |  |-- TargetDirectories.txt
+    |  |  `-- tests.dir
+    |  |      |-- build.make
+    |  |      |-- cmake_clean.cmake
+    |  |      |-- DependInfo.cmake
+    |  |      `-- progress.make
+    |  |-- cmake_install.cmake
+    |  |-- CTestConfiguration.ini
+    |  |-- CTestCustom.cmake
+    |  |-- CTestTestfile.cmake
+    |  |-- gtest
+    |  |  |-- CMakeFiles
+    |  |  |  |-- CMakeDirectoryInformation.cmake
+    |  |  |  `-- progress.marks
+    |  |  |-- cmake_install.cmake
+    |  |  |-- CTestTestfile.cmake
+    |  |  |-- googlemock
+    |  |  |  |-- CMakeFiles
+    |  |  |  |  |-- CMakeDirectoryInformation.cmake
+    |  |  |  |  |-- gmock.dir
+    |  |  |  |  |  |-- build.make
+    |  |  |  |  |  |-- cmake_clean.cmake
+    |  |  |  |  |  |-- DependInfo.cmake
+    |  |  |  |  |  |-- depend.make
+    |  |  |  |  |  |-- flags.make
+    |  |  |  |  |  |-- link.txt
+    |  |  |  |  |  |-- progress.make
+    |  |  |  |  |  `-- src
+    |  |  |  |  |-- gmock_main.dir
+    |  |  |  |  |  |-- build.make
+    |  |  |  |  |  |-- cmake_clean.cmake
+    |  |  |  |  |  |-- DependInfo.cmake
+    |  |  |  |  |  |-- depend.make
+    |  |  |  |  |  |-- flags.make
+    |  |  |  |  |  |-- link.txt
+    |  |  |  |  |  |-- progress.make
+    |  |  |  |  |  `-- src
+    |  |  |  |  `-- progress.marks
+    |  |  |  |-- cmake_install.cmake
+    |  |  |  |-- CTestTestfile.cmake
+    |  |  |  |-- gtest
+    |  |  |  |  |-- CMakeFiles
+    |  |  |  |  |  |-- CMakeDirectoryInformation.cmake
+    |  |  |  |  |  |-- gtest.dir
+    |  |  |  |  |  |  |-- build.make
+    |  |  |  |  |  |  |-- cmake_clean.cmake
+    |  |  |  |  |  |  |-- DependInfo.cmake
+    |  |  |  |  |  |  |-- depend.make
+    |  |  |  |  |  |  |-- flags.make
+    |  |  |  |  |  |  |-- link.txt
+    |  |  |  |  |  |  |-- progress.make
+    |  |  |  |  |  |  `-- src
+    |  |  |  |  |  |-- gtest_main.dir
+    |  |  |  |  |  |  |-- build.make
+    |  |  |  |  |  |  |-- cmake_clean.cmake
+    |  |  |  |  |  |  |-- DependInfo.cmake
+    |  |  |  |  |  |  |-- depend.make
+    |  |  |  |  |  |  |-- flags.make
+    |  |  |  |  |  |  |-- link.txt
+    |  |  |  |  |  |  |-- progress.make
+    |  |  |  |  |  |  `-- src
+    |  |  |  |  |  `-- progress.marks
+    |  |  |  |  |-- cmake_install.cmake
+    |  |  |  |  |-- CTestTestfile.cmake
+    |  |  |  |  `-- Makefile
+    |  |  |  `-- Makefile
+    |  |  |-- lib
+    |  |  `-- Makefile
+    |  |-- Makefile
+    |  |-- rplidar_ros
+    |  |  |-- catkin_generated
+    |  |  |  |-- installspace
+    |  |  |  |  |-- rplidar_rosConfig.cmake
+    |  |  |  |  |-- rplidar_rosConfig-version.cmake
+    |  |  |  |  `-- rplidar_ros.pc
+    |  |  |  |-- ordered_paths.cmake
+    |  |  |  |-- package.cmake
+    |  |  |  |-- pkg.develspace.context.pc.py
+    |  |  |  |-- pkg.installspace.context.pc.py
+    |  |  |  `-- stamps
+    |  |  |      `-- rplidar_ros
+    |  |  |          |-- package.xml.stamp
+    |  |  |          `-- pkg.pc.em.stamp
+    |  |  |-- CMakeFiles
+    |  |  |  |-- CMakeDirectoryInformation.cmake
+    |  |  |  |-- geometry_msgs_generate_messages_cpp.dir
+    |  |  |  |  |-- build.make
+    |  |  |  |  |-- cmake_clean.cmake
+    |  |  |  |  |-- DependInfo.cmake
+    |  |  |  |  `-- progress.make
+    |  |  |  |-- geometry_msgs_generate_messages_eus.dir
+    |  |  |  |  |-- build.make
+    |  |  |  |  |-- cmake_clean.cmake
+    |  |  |  |  |-- DependInfo.cmake
+    |  |  |  |  `-- progress.make
+    |  |  |  |-- geometry_msgs_generate_messages_lisp.dir
+    |  |  |  |  |-- build.make
+    |  |  |  |  |-- cmake_clean.cmake
+    |  |  |  |  |-- DependInfo.cmake
+    |  |  |  |  `-- progress.make
+    |  |  |  |-- geometry_msgs_generate_messages_nodejs.dir
+    |  |  |  |  |-- build.make
+    |  |  |  |  |-- cmake_clean.cmake
+    |  |  |  |  |-- DependInfo.cmake
+    |  |  |  |  `-- progress.make
+    |  |  |  |-- geometry_msgs_generate_messages_py.dir
+    |  |  |  |  |-- build.make
+    |  |  |  |  |-- cmake_clean.cmake
+    |  |  |  |  |-- DependInfo.cmake
+    |  |  |  |  `-- progress.make
+    |  |  |  |-- progress.marks
+    |  |  |  |-- roscpp_generate_messages_cpp.dir
+    |  |  |  |  |-- build.make
+    |  |  |  |  |-- cmake_clean.cmake
+    |  |  |  |  |-- DependInfo.cmake
+    |  |  |  |  `-- progress.make
+    |  |  |  |-- roscpp_generate_messages_eus.dir
+    |  |  |  |  |-- build.make
+    |  |  |  |  |-- cmake_clean.cmake
+    |  |  |  |  |-- DependInfo.cmake
+    |  |  |  |  `-- progress.make
+    |  |  |  |-- roscpp_generate_messages_lisp.dir
+    |  |  |  |  |-- build.make
+    |  |  |  |  |-- cmake_clean.cmake
+    |  |  |  |  |-- DependInfo.cmake
+    |  |  |  |  `-- progress.make
+    |  |  |  |-- roscpp_generate_messages_nodejs.dir
+    |  |  |  |  |-- build.make
+    |  |  |  |  |-- cmake_clean.cmake
+    |  |  |  |  |-- DependInfo.cmake
+    |  |  |  |  `-- progress.make
+    |  |  |  |-- roscpp_generate_messages_py.dir
+    |  |  |  |  |-- build.make
+    |  |  |  |  |-- cmake_clean.cmake
+    |  |  |  |  |-- DependInfo.cmake
+    |  |  |  |  `-- progress.make
+    |  |  |  |-- rosgraph_msgs_generate_messages_cpp.dir
+    |  |  |  |  |-- build.make
+    |  |  |  |  |-- cmake_clean.cmake
+    |  |  |  |  |-- DependInfo.cmake
+    |  |  |  |  `-- progress.make
+    |  |  |  |-- rosgraph_msgs_generate_messages_eus.dir
+    |  |  |  |  |-- build.make
+    |  |  |  |  |-- cmake_clean.cmake
+    |  |  |  |  |-- DependInfo.cmake
+    |  |  |  |  `-- progress.make
+    |  |  |  |-- rosgraph_msgs_generate_messages_lisp.dir
+    |  |  |  |  |-- build.make
+    |  |  |  |  |-- cmake_clean.cmake
+    |  |  |  |  |-- DependInfo.cmake
+    |  |  |  |  `-- progress.make
+    |  |  |  |-- rosgraph_msgs_generate_messages_nodejs.dir
+    |  |  |  |  |-- build.make
+    |  |  |  |  |-- cmake_clean.cmake
+    |  |  |  |  |-- DependInfo.cmake
+    |  |  |  |  `-- progress.make
+    |  |  |  |-- rosgraph_msgs_generate_messages_py.dir
+    |  |  |  |  |-- build.make
+    |  |  |  |  |-- cmake_clean.cmake
+    |  |  |  |  |-- DependInfo.cmake
+    |  |  |  |  `-- progress.make
+    |  |  |  |-- rplidarNodeClient.dir
+    |  |  |  |  |-- build.make
+    |  |  |  |  |-- cmake_clean.cmake
+    |  |  |  |  |-- CXX.includecache
+    |  |  |  |  |-- DependInfo.cmake
+    |  |  |  |  |-- depend.internal
+    |  |  |  |  |-- depend.make
+    |  |  |  |  |-- flags.make
+    |  |  |  |  |-- link.txt
+    |  |  |  |  |-- progress.make
+    |  |  |  |  `-- src
+    |  |  |  |      `-- client.cpp.o
+    |  |  |  |-- rplidarNode.dir
+    |  |  |  |  |-- build.make
+    |  |  |  |  |-- cmake_clean.cmake
+    |  |  |  |  |-- CXX.includecache
+    |  |  |  |  |-- DependInfo.cmake
+    |  |  |  |  |-- depend.internal
+    |  |  |  |  |-- depend.make
+    |  |  |  |  |-- flags.make
+    |  |  |  |  |-- link.txt
+    |  |  |  |  |-- progress.make
+    |  |  |  |  |-- sdk
+    |  |  |  |  |  `-- src
+    |  |  |  |  |      |-- arch
+    |  |  |  |  |      |  `-- linux
+    |  |  |  |  |      |      |-- net_serial.cpp.o
+    |  |  |  |  |      |      `-- timer.cpp.o
+    |  |  |  |  |      |-- hal
+    |  |  |  |  |      |  `-- thread.cpp.o
+    |  |  |  |  |      `-- rplidar_driver.cpp.o
+    |  |  |  |  `-- src
+    |  |  |  |      `-- node.cpp.o
+    |  |  |  |-- sensor_msgs_generate_messages_cpp.dir
+    |  |  |  |  |-- build.make
+    |  |  |  |  |-- cmake_clean.cmake
+    |  |  |  |  |-- DependInfo.cmake
+    |  |  |  |  `-- progress.make
+    |  |  |  |-- sensor_msgs_generate_messages_eus.dir
+    |  |  |  |  |-- build.make
+    |  |  |  |  |-- cmake_clean.cmake
+    |  |  |  |  |-- DependInfo.cmake
+    |  |  |  |  `-- progress.make
+    |  |  |  |-- sensor_msgs_generate_messages_lisp.dir
+    |  |  |  |  |-- build.make
+    |  |  |  |  |-- cmake_clean.cmake
+    |  |  |  |  |-- DependInfo.cmake
+    |  |  |  |  `-- progress.make
+    |  |  |  |-- sensor_msgs_generate_messages_nodejs.dir
+    |  |  |  |  |-- build.make
+    |  |  |  |  |-- cmake_clean.cmake
+    |  |  |  |  |-- DependInfo.cmake
+    |  |  |  |  `-- progress.make
+    |  |  |  |-- sensor_msgs_generate_messages_py.dir
+    |  |  |  |  |-- build.make
+    |  |  |  |  |-- cmake_clean.cmake
+    |  |  |  |  |-- DependInfo.cmake
+    |  |  |  |  `-- progress.make
+    |  |  |  |-- std_msgs_generate_messages_cpp.dir
+    |  |  |  |  |-- build.make
+    |  |  |  |  |-- cmake_clean.cmake
+    |  |  |  |  |-- DependInfo.cmake
+    |  |  |  |  `-- progress.make
+    |  |  |  |-- std_msgs_generate_messages_eus.dir
+    |  |  |  |  |-- build.make
+    |  |  |  |  |-- cmake_clean.cmake
+    |  |  |  |  |-- DependInfo.cmake
+    |  |  |  |  `-- progress.make
+    |  |  |  |-- std_msgs_generate_messages_lisp.dir
+    |  |  |  |  |-- build.make
+    |  |  |  |  |-- cmake_clean.cmake
+    |  |  |  |  |-- DependInfo.cmake
+    |  |  |  |  `-- progress.make
+    |  |  |  |-- std_msgs_generate_messages_nodejs.dir
+    |  |  |  |  |-- build.make
+    |  |  |  |  |-- cmake_clean.cmake
+    |  |  |  |  |-- DependInfo.cmake
+    |  |  |  |  `-- progress.make
+    |  |  |  `-- std_msgs_generate_messages_py.dir
+    |  |  |      |-- build.make
+    |  |  |      |-- cmake_clean.cmake
+    |  |  |      |-- DependInfo.cmake
+    |  |  |      `-- progress.make
+    |  |  |-- cmake_install.cmake
+    |  |  |-- CTestTestfile.cmake
+    |  |  `-- Makefile
+    |  `-- test_results
+    |-- devel
+    |  |-- cmake.lock
+    |  |-- env.sh
+    |  |-- lib
+    |  |  |-- pkgconfig
+    |  |  |  `-- rplidar_ros.pc
+    |  |  `-- rplidar_ros
+    |  |      |-- rplidarNode
+    |  |      `-- rplidarNodeClient
+    |  |-- local_setup.bash
+    |  |-- local_setup.sh
+    |  |-- local_setup.zsh
+    |  |-- setup.bash
+    |  |-- setup.sh
+    |  |-- _setup_util.py
+    |  |-- setup.zsh
+    |  `-- share
+    |      `-- rplidar_ros
+    |          `-- cmake
+    |              |-- rplidar_rosConfig.cmake
+    |              `-- rplidar_rosConfig-version.cmake
+    `-- src
+        |-- CMakeLists.txt -> /opt/ros/noetic/share/catkin/cmake/toplevel.cmake
+        `-- rplidar_ros
+            |-- CHANGELOG.rst
+            |-- CMakeLists.txt
+            |-- launch
+            |  |-- gmapping.launch
+            |  |-- hectormapping.launch
+            |  |-- karto.launch
+            |  |-- karto_mapper_params.yaml
+            |  |-- rplidar.launch
+            |  |-- test_rplidar.launch
+            |  |-- view_gmapping.launch
+            |  |-- view_hectorSlam.launch
+            |  |-- view_karto.launch
+            |  |-- view_rplidar.launch
+            |  `-- view_slam.launch
+            |-- LICENSE
+            |-- package.xml
+            |-- README.md
+            |-- rplidar_A1.png
+            |-- rplidar_A2.png
+            |-- rviz
+            |  |-- rplidar.rviz
+            |  `-- slam.rviz
+            |-- scripts
+            |  |-- create_udev_rules.sh
+            |  |-- delete_udev_rules.sh
+            |  `-- rplidar.rules
+            |-- sdk
+            |  |-- include
+            |  |  |-- rplidar_cmd.h
+            |  |  |-- rplidar_driver.h
+            |  |  |-- rplidar.h
+            |  |  |-- rplidar_protocol.h
+            |  |  `-- rptypes.h
+            |  |-- README.txt
+            |  `-- src
+            |      |-- arch
+            |      |  |-- linux
+            |      |  |  |-- arch_linux.h
+            |      |  |  |-- net_serial.cpp
+            |      |  |  |-- net_serial.h
+            |      |  |  |-- thread.hpp
+            |      |  |  |-- timer.cpp
+            |      |  |  `-- timer.h
+            |      |  |-- macOS
+            |      |  |  |-- arch_macOS.h
+            |      |  |  |-- net_serial.cpp
+            |      |  |  |-- net_serial.h
+            |      |  |  |-- thread.hpp
+            |      |  |  |-- timer.cpp
+            |      |  |  `-- timer.h
+            |      |  `-- win32
+            |      |      |-- arch_win32.h
+            |      |      |-- net_serial.cpp
+            |      |      |-- net_serial.h
+            |      |      |-- timer.cpp
+            |      |      |-- timer.h
+            |      |      `-- winthread.hpp
+            |      |-- hal
+            |      |  |-- abs_rxtx.h
+            |      |  |-- event.h
+            |      |  |-- locker.h
+            |      |  |-- thread.cpp
+            |      |  |-- thread.h
+            |      |  `-- util.h
+            |      |-- rplidar_driver.cpp
+            |      |-- rplidar_driver_serial.h
+            |      `-- sdkcommon.h
+            `-- src
+                |-- client.cpp
+                `-- node.cpp
+
+    98 directories, 326 files
+
+
+
+    </code></pre>
+                   </details>
+                   <br>
+                   Then, enter: 
+                   <pre><code class="language-sh">catkin_make</code></pre>
+                   <p><code class="language-sh">catkin_make</code> is a project building utility (similar to "make"), which is configured to look for directories under the src/ sub-folder and build them one by one. In this case, there is only one package, namely "rplidar_ros". You should see compilation messages on screen. There may be a few compilation warnings which you can safely ignore.</p>
+                   Now open a new terminal and write:
+                   <pre><code class="language-sh">source ~/cg2111a/devel/setup.bash</code></pre>
+                   Remember to perform this step if you open a new terminal. Alternatively, you can add this line to the end of <code class="language-sh">.bashrc</code> under the <code class="language-sh">/home/pi folder</code>.<br>
+                   Plug in your RPLidar A1 unit, then run the following two commands in two separate terminals:
+                   <pre><code class="language-sh"># In terminal 1, first command:
+    roslaunch rplidar_ros rplidar.launch
+    # In terminal 2, second command:
+    rosrun rplidar_ros rplidarNodeClient</code></pre>
+                   <p>On the terminal that executed the second command, you should see RPLidar readings:</p>
+                   <div class="cg-center"><img src="../ros-slam/img/client_demo.gif" width=40%></div>
+                   <p>Once you verified that the RPLidar readings are shown, you can safely close all terminals.</p>
+                   <h3>2.2 Running a Hector SLAM ROS node</h3>
+                   <p>Hello Hector! As discussed earlier, there are many SLAM variants. We have chosen Hector SLAM for our studio as it does not require odometry data. You can view the SLAM map by doing:</p>
+                   <p>Open a terminal, run:</p>
+                   <pre><code class="language-sh">source ~/cg2111a/devel/setup.bash</code></pre>
+                   <p>Now, this is the moment of truth. Execute:</p>
+                   <pre><code class="language-sh">roslaunch rplidar_ros view_slam.launch</code></pre>
+                   <p>You should see a map generated by the visualizer program rviz.
+                   <p>
+                   <p>Slowly rotate the RPLidar A1 unit on the spot and observe the map. You should see the map is being refined continuously. If you have a wifi setup with Pi, you are encouraged to move the RPLidar unit around in the lab slowly and see how the map builds up.
+                   <p>
+                   <p>You can see that rplidarNode broadcast the LiDAR reading for the hector mapping node to perform SLAM algorithm. Note the rviz node is not shown. Let's now add the current estimated location of our robot in the map to rviz. In rviz, click [Add] in the bottom left hand corner, and select Pose. Set the topic of the pose to be /slam_out_pose, this is the localisation broadcast topic from our SLAM algorithm. You can now see on the map where the SLAM algorithm believes the robot is! Here is a demostration:</p>
+                   <div class="cg-center"><img src="../ros-slam/img/slam_demo.gif" width=40%></div>
+                   <p>Now let's get things back up and running with Alex: try getting your original code back up to drive your robot around!</p>
+                   <h2 class="cg-centered-heading">End of Tutorial</h2>
+                   <hr>
+                   <div class="bonus">
+                      <strong class="callout-label">Bonus Time</strong>
+                      <h2 class="cg-centered-heading"><span style="color: green;">Your SLAM Works!</span></h2>
+                      <p>Congratulations! You have successfully implemented the SLAM Algorithm on your Raspberry Pi! However, you may notice that your Raspberry Pi becomes extremely hot when rendering the SLAM Map:</p>
+                      <div class="cg-center"><img src="../ros-slam/img/hot.png" width=40%></div>
+                      <p>The extensive calculations required to render the SLAM Map from LiDAR data can significantly burden the Raspberry Pi's CPU. How can we alleviate this issue?</p>
+                      <p>One solution is to offload the LiDAR data processing to your computer, allowing it to render the map instead. We will explore this method in detail in <a href="../ros-network/">Tutorial 4: ROS Networking</a>.</p>
+                   </div>
+                   <hr>
+                   <br>
+                   <h2> References:</h2>
+                   <ul>
+                      <li> Prof. Boyd Anderson; CG2111A, AY22/23 Semester II;
+                   </ul>
+  </article>
+  <nav class="cg-page-pager" id="cg-page-pager" aria-label="Tutorial page navigation"></nav>
+</main>
+<footer id="site-footer"></footer>
+<script src="../../../common.js"></script>
+<script src="../tutorial.js"></script>
+<script>
+  initCg2111aPage({
+    base: '../../../',
+    root: '../',
+    page: 'slam'
+  });
+</script>
+</body>
+</html>

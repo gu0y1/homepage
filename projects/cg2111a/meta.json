@@ -1,0 +1,18 @@
+{
+  "title": "CG2111A ROS Tutorial",
+  "date": "2024-03-29",
+  "year": 2024,
+  "status": "Teaching project",
+  "summary": "Self-contained Robot Operating System tutorial materials for CG2111A Engineering Principles and Practice II, including Raspberry Pi setup, ROS topics, LiDAR SLAM, networking, system images, and Q&A.",
+  "thumbnail": "thumbnail.png",
+  "tags": [
+    "CG2111A",
+    "ROS",
+    "Raspberry Pi",
+    "LiDAR",
+    "SLAM"
+  ],
+  "links": {
+    "course": "https://nusmods.com/courses/CG2111A/engineering-principles-and-practice-ii"
+  }
+}

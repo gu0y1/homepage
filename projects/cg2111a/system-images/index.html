@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>System Images - CG2111A - Chen Guoyi</title>
+  <meta name="description" content="PurplePet Raspberry Pi OS image information and release notes.">
+  <link rel="stylesheet" href="../../../styles.css">
+  <link rel="stylesheet" href="../cg2111a.css">
+</head>
+<body>
+<header id="site-header"></header>
+<main class="project-page cg2111a-page">
+  <section class="cg-course-panel" id="cg-course-panel"></section>
+  <article class="cg-tutorial-content">
+    <h2><strong><span style="color: purple;">Raspberry Pi OS (PurplePet) v1.0.1</strong></span></h2>
+
+                <div class="container">
+      <div class="text-content">
+        <p><strong>Release date:</strong> March 24th 2024<br>
+        <strong>System Architecture:</strong> 64-bit ARM<br>
+        <strong>Debian version:</strong> 10 (Buster) from 2023-05-03-raspios-buster-armhf.img.xz<br>
+        <strong>Size:</strong> 6.81 GB<br>
+        <strong>Download from: </strong><a href="https://www.dropbox.com/scl/fi/v5zwpqlvm0syu7y36l359/PurplePet-v1.0.1.img?rlkey=8upawd7kox6uwybgahmbgr87m&dl=1" target="_blank">PurplePet-v1.0.1.img</a><br>
+    	<strong>Checksum (SHA256):</strong> e61df9b4558efbd6db0af0714fdd41a5fc84a6930eb3db4fc8dff970b21c6393<br>
+    	<strong><span style="color: red;">Back up everything on your Raspberry Pi 4 to your PC before writing this image!</span></strong></p>
+      </div>
+      <div class="image-content">
+        <!-- Replace 'image_url_here.jpg' with your actual image URL -->
+        <img src="../ros/img/cola.png" height="100" alt="PurplePet" class="custom-image">
+      </div>
+    </div>
+
+    <h3>Username & Password</h3>
+    <br>
+    <div class="login-form">
+        <div class="form-control">
+            <label for="username">Username:</label>
+            <input type="text" id="username" value="pi" readonly>
+        </div>
+    	<br>
+        <div class="form-control">
+            <label for="password">Password:</label>
+            <input type="text" id="password" value="epp2wins" readonly>
+        </div>
+    </div>
+    <br>
+
+
+			
+    			<h3>Release Note</h3>
+    			<ul>
+    				<li>This OS image is the latest stable version based on <strong>Debian 10</strong> with pre-deployed <strong>ROS Noetic</strong> inside.</li>
+    				<li>Designed for CG2111A AY23/24 Cohort ALEX Final Task. Built by CG2111A Teaching Team.</li>
+    				<li>Students can build this OS from source by following instructions in <a href="../ros-setup/">Tutorial 1</a>.</li>
+    				<li>Fixed some issues.</li>
+    			</ul>
+			
+    			<h3>Pre-deployed Features</h3>
+    			<ul>
+    				<li>All pre-deployed packages, libraries and softwares are built from the latest source.</li>
+    				<li>All Debian 10 dependencies are up-to-date, since Debian 10 is End-of-Life (EoL) in 2024, this images was built from the last stable version of Debian 10.</li>
+    				<li>Pre-deployed the latest version of ROS Noetic, with all necessary packages inside.</li>
+    				<li>Pre-deployed RPi LiDAR packages, with all dependencies.</li>
+    				<li>Pre-deployed Wi-Fi "NUS_STU" certificate.</li>
+    				<li>Pre-installed the latest version of VNC Server for ARM (v6.7.2).</li>
+    				<li>Pre-installed the latest version of Sublime Text Editor for ARM.</li>
+    				<li>Pre-installed the latest version of Arduino IDE for ARM (v1.8.1).</li>
+    				<li>Pre-installed the latest version of Thonny Python IDE for Debian with Python3 environment pre-defined (v3.7.3).</li>
+    				<li>Pre-installed some Python libraries, such as flask, matplotlib...</li>
+    				<li>Pre-installed the latest version of gparted for Debian 10.</li>
+    				<li>Developed a new Terminal Welcome Rule in .bashrc, once student begins a new session from ssh or terminal, they will receive essential information from Raspberry Pi, such as ROS source, IP address, etc.</li>
+    				<li>Pre-enabled VNC and SSH.</li>
+    			</ul>
+			
+    			<h3>Issue Solved</h3>
+    			<ul>
+    				<li>Permission on port /ttyUSB0 is granted to all users, which improve the stability of LiDAR connection.</li>
+    				<li>Broadcasting Port 11311 is added to firewall outbound rules. (for <a href="../ros-network/">ROS Networking</a>).</li>
+    				<li>HTTP Port 80 is added to firewall outbound rules (for Python Flask Server).</li>
+    				<li>"Cannot currently show the desktop" issue solved by pre-render GUI.</li>
+    				<li>Set up BOOT priority to avoid "Rainbow Like" screen.</li>
+    			</ul>
+			
+    			<h3>Performance Test (on Raspberry Pi 4)</h3>
+    	<table class="custom-table">
+        <tr>
+            <th>Test Item</th>
+            <th>Result</th>
+        </tr>
+        <tr>
+            <td>Plug and Play on Raspberry Pi 4</td>
+            <td>Supported</td>
+        </tr>
+        <tr>
+            <td>Plug and Play on Raspberry Pi 5</td>
+            <td>Supported</td>
+        </tr>
+        <tr>
+            <td>System is stable and works continuously for 5 hours</td>
+            <td>Supported</td>
+        </tr>
+        <tr>
+            <td>Radar is stable and works continuously for 5 hours</td>
+            <td>Supported</td>
+        </tr>
+        <tr>
+            <td>Stable operation under undervoltage</td>
+            <td>Supported</td>
+        </tr>
+        <tr>
+            <td>System continuously renders SLAM Map for 3 hours</td>
+            <td>Supported</td>
+        </tr>
+        <tr>
+            <td>System continuously renders SLAM Map while simultaneously doing UART serial communication</td>
+            <td>Supported</td>
+        </tr>
+        <tr>
+            <td>Hot-plug HDMI</td>
+            <td>Supported</td>
+        </tr>
+        <tr>
+            <td>Auto-recovery after hot-plugging power supply</td>
+            <td>Supported</td>
+        </tr>
+        <tr>
+            <td>Auto-recovery after hot-plugging SD card and rebooting</td>
+            <td>Supported</td>
+        </tr>
+    </table>
+  </article>
+  <nav class="cg-page-pager" id="cg-page-pager" aria-label="Tutorial page navigation"></nav>
+</main>
+<footer id="site-footer"></footer>
+<script src="../../../common.js"></script>
+<script src="../tutorial.js"></script>
+<script>
+  initCg2111aPage({
+    base: '../../../',
+    root: '../',
+    page: 'release'
+  });
+</script>
+</body>
+</html>

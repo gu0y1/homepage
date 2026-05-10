@@ -1,0 +1,4 @@
+# Large upstream installer archives kept out of the website repository.
+/pwm/*.dmg
+/pwm/*.exe
+/wget/*.tar.xz
